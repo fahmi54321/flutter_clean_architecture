@@ -1,20 +1,38 @@
+import 'package:flutter_clean_architecture/1_domain/usecases/advice_usecases.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../1_domain/failures/failures.dart';
 
 part 'advicer_state.dart';
 
+const generalFailureMessage = 'Ups, something gone wrong. Please try again!';
+const serverFailureMessage = 'Ups, API Error. please try again!';
+const cacheFailureMessage = 'Ups, chache failed. Please try again!';
+
 class AdvicerCubit extends Cubit<AdvicerCubitState> {
   AdvicerCubit() : super(AdvicerInitial());
+  final AdviceUseCases adviceUseCases = AdviceUseCases();
+  // could also use other usecases
 
   void adviceRequested() async {
     emit(AdvicerStateLoading());
-    // execute business logic
-    // for example get and advice
-    debugPrint('fake get advice triggered');
-    await Future.delayed(const Duration(seconds: 3), () {});
-    debugPrint('got advice');
-    //emit(AdvicerStateLoaded(advice: 'fake advice to test bloc'));
-    emit(const AdvicerStateError(message: 'error message'));
+    final failureOrAdvice = await adviceUseCases.getAdvice();
+    failureOrAdvice.fold(
+      (failure) =>
+          emit(AdvicerStateError(message: _mapFailureToMessage(failure))),
+      (advice) => emit(AdvicerStateLoaded(advice: advice.advice)),
+    );
+  }
+
+  String _mapFailureToMessage(Failure failure) {
+    switch (failure.runtimeType) {
+      case ServerFailure:
+        return serverFailureMessage;
+      case CacheFailure:
+        return cacheFailureMessage;
+      default:
+        return generalFailureMessage;
+    }
   }
 }

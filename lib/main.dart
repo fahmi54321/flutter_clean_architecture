@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_clean_architecture/2_application/pages/advice/advice_page.dart';
 import 'package:flutter_clean_architecture/theme.dart';
 import 'package:provider/provider.dart';
 
 import '2_application/core/services/theme_service.dart';
+import '2_application/pages/advice/advice_page.dart';
 
 void main() {
   runApp(
