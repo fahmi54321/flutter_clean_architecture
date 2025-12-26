@@ -1,5 +1,5 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_clean_architecture/1_domain/entities/advice_entity.dart';
+import 'package:dartz/dartz.dart';
 
 import '../failures/failures.dart';
 
