@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
 class ErrorMessage extends StatelessWidget {
@@ -11,8 +10,8 @@ class ErrorMessage extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(Icons.error, size: 40.0, color: Colors.redAccent),
-        const SizedBox(height: 20.0),
+        const Icon(Icons.error, size: 40, color: Colors.redAccent),
+        const SizedBox(height: 20),
         Text(
           message,
           style: themeData.textTheme.headlineLarge,

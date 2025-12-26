@@ -1,12 +1,26 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/2_application/core/services/theme_service.dart';
-import 'package:flutter_clean_architecture/2_application/pages/advice/widgets/advice_field.dart';
+import 'package:flutter_clean_architecture/2_application/pages/advice/cubit/advicer_cubit.dart';
 import 'package:flutter_clean_architecture/2_application/pages/advice/widgets/custom_button.dart';
 import 'package:flutter_clean_architecture/2_application/pages/advice/widgets/error_message.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'widgets/advice_field.dart';
 
-class AdvicePage extends StatelessWidget {
-  const AdvicePage({super.key});
+class AdvicerPageWrapperProvider extends StatelessWidget {
+  const AdvicerPageWrapperProvider({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => AdvicerCubit(),
+      child: const AdvicerPage(),
+    );
+  }
+}
+
+class AdvicerPage extends StatelessWidget {
+  const AdvicerPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,30 +39,33 @@ class AdvicePage extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsetsGeometry.symmetric(horizontal: 50.0),
+        padding: const EdgeInsets.symmetric(horizontal: 50),
         child: Column(
           children: [
             Expanded(
               child: Center(
-                child: ErrorMessage(
-                  message: 'Something went wrong! Please try again later.',
-                  /*
-                  AdviceField(
-                  advice: 'Your Advice is writing for you!',)
-                  */
-                  /*CircularProgressIndicator(
-                  color: themeData.colorScheme.secondary,)
-                  */
-
-                  /*Text(
-                  'Your Advice is writing for you!',
-                  style: themeData.textTheme.headlineLarge,)
-
-                ),*/
+                child: BlocBuilder<AdvicerCubit, AdvicerCubitState>(
+                  builder: (context, state) {
+                    if (state is AdvicerInitial) {
+                      return Text(
+                        'Your Advice is waiting for you!',
+                        style: themeData.textTheme.headlineLarge,
+                      );
+                    } else if (state is AdvicerStateLoading) {
+                      return CircularProgressIndicator(
+                        color: themeData.colorScheme.secondary,
+                      );
+                    } else if (state is AdvicerStateLoaded) {
+                      return AdviceField(advice: state.advice);
+                    } else if (state is AdvicerStateError) {
+                      return ErrorMessage(message: state.message);
+                    }
+                    return const SizedBox();
+                  },
                 ),
               ),
             ),
-            SizedBox(height: 200, child: Center(child: CustomButton())),
+            const SizedBox(height: 200, child: Center(child: CustomButton())),
           ],
         ),
       ),
